@@ -8,6 +8,28 @@ query_params = st.experimental_get_query_params()
 if query_params.get("page") == ["next"]:
     st.title("Welcome to the Data clustering secton!")
     st.header("Perform K-means and Fuzzy C means Clustering")
+    # Allow user to upload their data
+    uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+
+    if uploaded_file is not None:
+        # Read the uploaded file as a dataframe
+        user_data = pd.read_csv(uploaded_file)
+        st.write("Uploaded Data:")
+        st.dataframe(user_data)
+
+        # Ask user which clustering method they would like to use
+        clustering_method = st.radio(
+            "Which clustering method would you like to use?",
+            ("K-Means", "Fuzzy C-Means")
+        )
+
+        # Based on the selection, show additional instructions or options
+        if clustering_method == "K-Means":
+            st.write("You selected K-Means clustering.")
+            # Additional K-Means settings (like number of clusters) can be added here
+        elif clustering_method == "Fuzzy C-Means":
+            st.write("You selected Fuzzy C-Means clustering.")
+            # Additional Fuzzy C-Means settings can be added here
 else:
 # Display the main page (data generation page)
     # Title of the app
