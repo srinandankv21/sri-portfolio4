@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 # Check the page query parameter
 
-def kmeans():
+def kmeans(uploaded_file):
     if uploaded_file is not None:
         # Load the dataset
         data = pd.read_csv(uploaded_file)
@@ -113,7 +113,7 @@ if query_params.get("page") == ["next"]:
         # Based on the selection, show additional instructions or options
         if clustering_method == "K-Means":
             st.write("You selected K-Means clustering.")
-            kmeans()
+            kmeans(uploaded_file)
         elif clustering_method == "Fuzzy C-Means":
             st.write("You selected Fuzzy C-Means clustering.")
             # Additional Fuzzy C-Means settings can be added here
