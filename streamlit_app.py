@@ -82,6 +82,94 @@ def kmeans(data):
                 st.write("Please select at least one feature to proceed with clustering.")
         else:
             st.write("The dataset doesn't have any numeric columns for clustering.")
+
+def fuzzycmeans(data):
+   # Filter numeric columns
+        numeric_columns = data.select_dtypes(include=[np.number]).columns.tolist()
+        
+        # Check if there are any numeric columns
+        if len(numeric_columns) > 0:
+            st.write("Select the features to use for clustering:")
+            
+            # Multi-select box for choosing the features
+            selected_features = st.multiselect("Features", numeric_columns, default=numeric_columns[:5])
+            
+            if selected_features:
+               # Normalize the data
+               data = ((data - data.min()) / (data.max() - data.min())) * 9 + 1
+               
+               # Function to initialize random fuzzy membership matrix
+               def initialize_membership_matrix(n_samples, k):
+                   membership_matrix = np.random.rand(n_samples, k)
+                   membership_matrix = membership_matrix / membership_matrix.sum(axis=1, keepdims=True)
+                   return membership_matrix
+               
+               # Function to compute centroids based on membership matrix
+               def compute_centroids(data, membership_matrix, m):
+                   um = membership_matrix ** m
+                   centroids = (um.T @ data) / um.sum(axis=0)[:, None]
+                   return centroids
+               
+               # Function to update the membership matrix
+               def update_membership_matrix(data, centroids, m):
+                   distances = np.zeros((data.shape[0], centroids.shape[0]))
+                   
+                   for i, centroid in enumerate(centroids):
+                       distances[:, i] = np.linalg.norm(data - centroid, axis=1)
+                   
+                   # Avoid division by zero
+                   distances = np.fmax(distances, np.finfo(np.float64).eps)
+                   
+                   new_membership_matrix = np.zeros_like(distances)
+                   for i in range(centroids.shape[0]):
+                       denominator = (distances[:, i][:, None] / distances) ** (2 / (m - 1))
+                       new_membership_matrix[:, i] = 1 / denominator.sum(axis=1)
+                   
+                   return new_membership_matrix
+               
+               # Function to run Fuzzy C-Means clustering
+               def fuzzy_c_means(data, k, m, max_iterations):
+                   n_samples = data.shape[0]
+                   membership_matrix = initialize_membership_matrix(n_samples, k)
+                   for iteration in range(max_iterations):
+                       centroids = compute_centroids(data, membership_matrix, m)
+                       new_membership_matrix = update_membership_matrix(data, centroids, m)
+                       
+                       # Stop if membership matrix converges
+                       if np.linalg.norm(new_membership_matrix - membership_matrix) < 1e-5:
+                           break
+                       membership_matrix = new_membership_matrix
+                   
+                   return centroids, membership_matrix
+               
+               # Streamlit interface
+               st.title("Fuzzy C-Means Clustering")
+               
+               # Streamlit UI inputs
+               k = st.slider("Number of Clusters (k)", 2, 10, 3)
+               m = st.slider("Fuzziness Parameter (m)", 1.1, 2.5, 2.0, step=0.1)
+               max_iterations = st.slider("Max Iterations", 50, 300, 100)
+               
+               # Run Fuzzy C-Means clustering
+               centroids, membership_matrix = fuzzy_c_means(data.to_numpy(), k, m, max_iterations)
+               
+               # Assign each player to the cluster with the highest membership value
+               labels = np.argmax(membership_matrix, axis=1)
+               
+               # Plot the clusters using PCA for dimensionality reduction
+               pca = PCA(n_components=2)
+               data_2d = pca.fit_transform(data)
+               centroids_2d = pca.transform(centroids)
+               
+               fig, ax = plt.subplots()
+               scatter = ax.scatter(data_2d[:, 0], data_2d[:, 1], c=labels, cmap='viridis')
+               ax.scatter(centroids_2d[:, 0], centroids_2d[:, 1], marker='x', color='red', s=100, label='Centroids')
+               ax.set_title("Fuzzy C-Means Clustering")
+               ax.legend()
+               
+               st.pyplot(fig)
+        else:
+            st.write("The dataset doesn't have any numeric columns for clustering.")
     
 query_params = st.experimental_get_query_params()
 
