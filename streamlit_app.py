@@ -3,15 +3,8 @@ import pandas as pd
 import numpy as np
 # Check the page query parameter
 
-def kmeans(uploaded_file):
-    if uploaded_file is not None:
-        # Load the dataset
-        data = pd.read_csv(uploaded_file)
-        st.write("Dataset loaded successfully!")
-    
-        # Display the first few rows of the dataset
-        st.write(data.head())
-    
+def kmeans(data):
+   
         # Filter numeric columns
         numeric_columns = data.select_dtypes(include=[np.number]).columns.tolist()
         
@@ -87,8 +80,7 @@ def kmeans(uploaded_file):
                 st.write("Please select at least one feature to proceed with clustering.")
         else:
             st.write("The dataset doesn't have any numeric columns for clustering.")
-    else:
-        st.write("Please upload a CSV file to proceed.")
+    
 query_params = st.experimental_get_query_params()
 
 # If the user navigates to the next page
@@ -113,7 +105,7 @@ if query_params.get("page") == ["next"]:
         # Based on the selection, show additional instructions or options
         if clustering_method == "K-Means":
             st.write("You selected K-Means clustering.")
-            kmeans(uploaded_file)
+            kmeans(user_data)
         elif clustering_method == "Fuzzy C-Means":
             st.write("You selected Fuzzy C-Means clustering.")
             # Additional Fuzzy C-Means settings can be added here
