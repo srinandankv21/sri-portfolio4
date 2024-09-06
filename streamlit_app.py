@@ -78,6 +78,22 @@ def kmeans(data):
                     clustered_data = data.copy()
                     clustered_data['Cluster'] = all_labels.values
                     st.write(clustered_data)
+                                    
+                    # Optional: Download clustered data
+                    @st.cache
+                    def convert_df_to_csv(df):
+                         return df.to_csv(index=False).encode('utf-8')
+                     
+                    csv = convert_df_to_csv(clustered_data)
+                     
+                    st.download_button(
+                         label="Download Clustered Data as CSV",
+                         data=csv,
+                         file_name='clustered_energy_consumption.csv',
+                         mime='text/csv',
+                    )
+
+               
             else:
                 st.write("Please select at least one feature to proceed with clustering.")
         else:
