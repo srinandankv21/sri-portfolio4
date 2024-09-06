@@ -198,7 +198,7 @@ if query_params.get("page") == ["next"]:
             kmeans(user_data)
         elif clustering_method == "Fuzzy C-Means":
             st.write("You selected Fuzzy C-Means clustering.")
-            # Additional Fuzzy C-Means settings can be added here
+            fuzzycmeans(user_data)
 else:
 # Display the main page (data generation page)
     # Title of the app
