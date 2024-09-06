@@ -192,14 +192,18 @@ def fuzzycmeans(data):
                st.pyplot(fig)
                # Display data with cluster membership
                st.subheader("Clustered Data with Memberships")
-               st.write(pd.DataFrame(u.T, columns=[f'Cluster {i+1} Membership' for i in range(k)]).head())
+               # Prepare data for download
+               result_df = pd.DataFrame(data.to_numpy(), columns=selected_features)
+               result_df['Cluster'] = labels
+               for i in range(k):
+                   result_df[f'Cluster {i + 1} Membership'] = membership_matrix[:, i]
                
                # Download clustered data
                @st.cache_data
                def convert_df_to_csv(df):
                    return df.to_csv(index=False).encode('utf-8')
                
-               csv = convert_df_to_csv(players)
+               csv = convert_df_to_csv(result_df)
                
                st.download_button(
                    label="Download Clustered Data as CSV",
