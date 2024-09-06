@@ -168,6 +168,28 @@ def fuzzycmeans(data):
                ax.legend()
                
                st.pyplot(fig)
+               fig, ax = plt.subplots(figsize=(8, 6))
+
+               for i in range(k):
+                    memberships = membership_matrix[i, :]
+                    scatter = ax.scatter(data_2d[:, 0], data_2d[:, 1], c=memberships, cmap='coolwarm', label=f'Cluster {i + 1}', s=80 * memberships)
+            
+                # Plot centroids
+               ax.scatter(centroids_2d[:, 0], centroids_2d[:, 1], marker='x', color='red', s=100, label='Centroids')
+                
+                # Add title, labels, and legend
+               ax.set_title("Fuzzy C-Means Clustering with Membership Levels")
+               ax.set_xlabel('Principal Component 1')
+               ax.set_ylabel('Principal Component 2')
+               ax.legend()
+            
+                # Add color bar to show membership intensity
+               cbar = plt.colorbar(scatter)
+               cbar.set_label('Membership Degree')
+            
+                # Show plot
+               st.pyplot(fig)
+               
         else:
             st.write("The dataset doesn't have any numeric columns for clustering.")
     
