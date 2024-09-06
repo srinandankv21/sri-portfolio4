@@ -166,7 +166,8 @@ def fuzzycmeans(data):
                ax.scatter(centroids_2d[:, 0], centroids_2d[:, 1], marker='x', color='red', s=100, label='Centroids')
                ax.set_title("Fuzzy C-Means Clustering")
                ax.legend()
-               
+               st.pyplot(fig)
+                           
                # Plot membership levels
                fig, ax = plt.subplots(figsize=(8, 6))
          
@@ -189,6 +190,23 @@ def fuzzycmeans(data):
                  
                  # Show plot
                st.pyplot(fig)
+               # Display data with cluster membership
+               st.subheader("Clustered Data with Memberships")
+               st.write(pd.DataFrame(u.T, columns=[f'Cluster {i+1} Membership' for i in range(k)]).head())
+               
+               # Download clustered data
+               @st.cache_data
+               def convert_df_to_csv(df):
+                   return df.to_csv(index=False).encode('utf-8')
+               
+               csv = convert_df_to_csv(players)
+               
+               st.download_button(
+                   label="Download Clustered Data as CSV",
+                   data=csv,
+                   file_name='fuzzy_clustered_soccer_players.csv',
+                   mime='text/csv',
+               )
                
         else:
             st.write("The dataset doesn't have any numeric columns for clustering.")
