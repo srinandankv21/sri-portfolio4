@@ -204,7 +204,7 @@ def fuzzycmeans(data):
                    return df.to_csv(index=False).encode('utf-8')
                
                csv = convert_df_to_csv(result_df)
-               
+               st.write(result_df)
                st.download_button(
                    label="Download Clustered Data as CSV",
                    data=csv,
