@@ -8,7 +8,7 @@ query_params = st.experimental_get_query_params()
 if query_params.get("page") == ["next"]:
     st.title("Welcome to the Data clustering secton!")
     st.header("Perform K-means and Fuzzy C means Clustering")
-else
+else:
 # Display the main page (data generation page)
     # Title of the app
     st.title("Custom Data Generator")
