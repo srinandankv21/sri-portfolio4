@@ -153,7 +153,7 @@ def fuzzycmeans(data):
                # Run Fuzzy C-Means clustering
                centroids, membership_matrix = fuzzy_c_means(data.to_numpy(), k, m, max_iterations)
                
-               # Assign each player to the cluster with the highest membership value
+               # Assign each feature to the cluster with the highest membership value
                labels = np.argmax(membership_matrix, axis=1)
                
                # Plot the clusters using PCA for dimensionality reduction
@@ -167,27 +167,27 @@ def fuzzycmeans(data):
                ax.set_title("Fuzzy C-Means Clustering")
                ax.legend()
                
-               st.pyplot(fig)
+               # Plot membership levels
                fig, ax = plt.subplots(figsize=(8, 6))
-
+         
                for i in range(k):
-                    memberships = membership_matrix[i, :]
-                    scatter = ax.scatter(data_2d[:, 0], data_2d[:, 1], c=memberships, cmap='coolwarm', label=f'Cluster {i + 1}', s=80 * memberships)
-            
-                # Plot centroids
+                     memberships = membership_matrix[:, i]
+                     scatter = ax.scatter(data_2d[:, 0], data_2d[:, 1], c=memberships, cmap='coolwarm', label=f'Cluster {i + 1}', s=80 * memberships)
+         
+               # Plot centroids
                ax.scatter(centroids_2d[:, 0], centroids_2d[:, 1], marker='x', color='red', s=100, label='Centroids')
-                
-                # Add title, labels, and legend
+                 
+                 # Add title, labels, and legend
                ax.set_title("Fuzzy C-Means Clustering with Membership Levels")
                ax.set_xlabel('Principal Component 1')
                ax.set_ylabel('Principal Component 2')
                ax.legend()
-            
-                # Add color bar to show membership intensity
+                 
+                 # Add color bar to show membership intensity
                cbar = plt.colorbar(scatter)
                cbar.set_label('Membership Degree')
-            
-                # Show plot
+                 
+                 # Show plot
                st.pyplot(fig)
                
         else:
